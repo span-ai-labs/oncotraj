@@ -1,0 +1,37 @@
+{
+  "schema_version": "oncotraj-eval/1.1.0",
+  "generated_at_utc": "2026-06-06T14:05:37.377591+00:00",
+  "submission_id": "v11_random_forest_msk_chord_msk_chord",
+  "split": "v11_cross_source",
+  "n_predictions": 101,
+  "n_unique_patients": 101,
+  "v11_meta": {
+    "train_source": "MSK_CHORD",
+    "train_n": 471,
+    "eval_source": "MSK_CHORD",
+    "eval_label": "in_distribution",
+    "model": "random_forest"
+  },
+  "task_a": null,
+  "task_b": {
+    "n": 101,
+    "n_observed": 72,
+    "n_censored": 29,
+    "mae": 292.90028626715934,
+    "mae_ci": [
+      231.90021920981542,
+      363.5284669172734
+    ],
+    "c_index": 0.43209568901071516,
+    "c_index_ci": [
+      0.36026962863247686,
+      0.5137883914513633
+    ],
+    "censoring_rate": 0.2871287128712871
+  },
+  "task_c": null,
+  "tasks_evaluated": [
+    "B"
+  ],
+  "notes": []
+}

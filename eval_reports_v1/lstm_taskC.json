@@ -1,0 +1,48 @@
+{
+  "generated_at_utc": "2026-05-15T07:36:00.654985+00:00",
+  "n_predictions": 83,
+  "n_unique_patients": 83,
+  "notes": [],
+  "schema_version": "oncotraj-eval/1.0.0",
+  "split": "test",
+  "submission_id": "lstm_taskC",
+  "task_a": null,
+  "task_b": null,
+  "task_c": {
+    "accuracy": 1.0,
+    "class_distribution": {
+      "EGFR_C797S": 1,
+      "other_or_unknown": 82
+    },
+    "confusion_matrix": {
+      "labels": [
+        "EGFR_C797S",
+        "other_or_unknown"
+      ],
+      "matrix": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          82
+        ]
+      ]
+    },
+    "macro_f1": 1.0,
+    "n": 83,
+    "per_class_f1": {
+      "EGFR_C797S": 1.0,
+      "other_or_unknown": 1.0
+    },
+    "roc_auc_excluded_classes": [
+      "EGFR_C797S"
+    ],
+    "roc_auc_ovr": null,
+    "weighted_f1": 1.0
+  },
+  "tasks_evaluated": [
+    "C"
+  ]
+}

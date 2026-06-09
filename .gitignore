@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env*
+# uv
+uv.lock
+
+# Tooling caches
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Data — raw inputs never committed; processed parquet stays out of git
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+*.parquet
+
+# Planning docs and Claude harness state (local-only, gitignored)
+.planning/
+paper/
+.claude/
+
+# MLflow tracking + trained baseline artefacts
+mlruns/
+mlruns_trash/
+models/baselines/**
+!models/baselines/.gitkeep
+
+# Cowork/Claude Code coordination markers — local-only, not committed
+.claude-step-done
+.claude-subagent-done
+.claude-session-start
+.claude-next-prompt

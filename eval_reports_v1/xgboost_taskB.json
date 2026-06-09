@@ -1,0 +1,28 @@
+{
+  "generated_at_utc": "2026-05-21T18:44:17.451387+00:00",
+  "n_predictions": 85,
+  "n_unique_patients": 85,
+  "notes": [
+    "Task B: no `task_b_event` column; treating every row as uncensored. C-index is computed but assumes no censoring."
+  ],
+  "schema_version": "oncotraj-eval/1.1.0",
+  "split": "test",
+  "submission_id": "xgboost_taskB",
+  "task_a": null,
+  "task_b": {
+    "c_index": 0.6432893289328933,
+    "censoring_rate": 0.0,
+    "mae": 265.6807561986587,
+    "mae_ci": [
+      208.99432578030755,
+      336.7577697347192
+    ],
+    "n": 85,
+    "n_observed": 85,
+    "rmse": 400.6387442417462
+  },
+  "task_c": null,
+  "tasks_evaluated": [
+    "B"
+  ]
+}

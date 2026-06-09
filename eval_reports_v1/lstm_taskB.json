@@ -1,0 +1,24 @@
+{
+  "generated_at_utc": "2026-05-15T07:35:56.925554+00:00",
+  "n_predictions": 83,
+  "n_unique_patients": 83,
+  "notes": [
+    "Task B: no `task_b_event` column; treating every row as uncensored. C-index is computed but assumes no censoring."
+  ],
+  "schema_version": "oncotraj-eval/1.0.0",
+  "split": "test",
+  "submission_id": "lstm_taskB",
+  "task_a": null,
+  "task_b": {
+    "c_index": 0.5680311328913231,
+    "censoring_rate": 0.0,
+    "mae": 280.9421186964196,
+    "n": 83,
+    "n_observed": 83,
+    "rmse": 466.37616970274934
+  },
+  "task_c": null,
+  "tasks_evaluated": [
+    "B"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "oncotraj-eval/1.1.0",
+  "generated_at_utc": "2026-06-06T14:05:46.776774+00:00",
+  "submission_id": "v11_majority_msk_chord_flaura_supp",
+  "split": "v11_cross_source",
+  "n_predictions": 107,
+  "n_unique_patients": 107,
+  "v11_meta": {
+    "train_source": "MSK_CHORD",
+    "train_n": 471,
+    "eval_source": "FLAURA_SUPP",
+    "eval_label": "cross_source",
+    "model": "majority"
+  },
+  "task_a": null,
+  "task_b": {
+    "n": 107,
+    "n_observed": 73,
+    "n_censored": 34,
+    "mae": 730.0,
+    "mae_ci": [
+      730.0,
+      730.0
+    ],
+    "c_index": null,
+    "c_index_ci": null,
+    "censoring_rate": 0.3177570093457944
+  },
+  "task_c": null,
+  "tasks_evaluated": [
+    "B"
+  ],
+  "notes": [
+    "MAE reported but target is constant on this cohort (harmonization-time pseudo-PFS); the value reflects a systematic offset, not predictive accuracy.",
+    "C-index undefined: target has no inter-patient variation (no comparable pairs)."
+  ]
+}

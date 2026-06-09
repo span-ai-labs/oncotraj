@@ -1,0 +1,38 @@
+{
+  "generated_at_utc": "2026-05-14T11:36:32.999677+00:00",
+  "n_predictions": 24,
+  "n_unique_patients": 24,
+  "notes": [],
+  "schema_version": "oncotraj-eval/1.0.0",
+  "split": "test",
+  "submission_id": "majority_taskA",
+  "task_a": {
+    "accuracy": 0.7083333333333334,
+    "brier": 0.20690082644628097,
+    "ece": 0.017424242424242453,
+    "f1": 0.8292682926829268,
+    "n": 24,
+    "positive_rate": 0.7083333333333334,
+    "reliability": {
+      "bin_centers": [
+        0.6500000000000001
+      ],
+      "counts": [
+        24
+      ],
+      "frequencies": [
+        0.7083333333333334
+      ],
+      "mean_pred": [
+        0.6909090909090909
+      ],
+      "n_bins": 10
+    },
+    "roc_auc": 0.5
+  },
+  "task_b": null,
+  "task_c": null,
+  "tasks_evaluated": [
+    "A"
+  ]
+}
