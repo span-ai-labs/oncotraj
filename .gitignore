@@ -8,8 +8,6 @@ dist/
 .venv/
 venv/
 .env*
-# uv
-uv.lock
 
 # Tooling caches
 .ruff_cache/
