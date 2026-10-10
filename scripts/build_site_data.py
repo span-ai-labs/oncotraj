@@ -37,6 +37,7 @@ Usage:
     /usr/bin/python3 scripts/build_site_data.py
     /usr/bin/python3 scripts/build_site_data.py --check
 """
+
 from __future__ import annotations
 
 import json
@@ -242,7 +243,9 @@ def report(data):
             f"({c['delta']:+.3f})  within-CI [{ci[0]:.3f}, {ci[1]:.3f}]"
         )
     n_cross = sum(
-        1 for r in data["task_a"] if r["roc_auc_ci"] and r["roc_auc_ci"][0] <= 0.5 <= r["roc_auc_ci"][1]
+        1
+        for r in data["task_a"]
+        if r["roc_auc_ci"] and r["roc_auc_ci"][0] <= 0.5 <= r["roc_auc_ci"][1]
     )
     print(f"\n  {n_cross}/{len(data['task_a'])} Task A intervals contain 0.50")
     for u in data["meta"]["unbacked_claims"]:
@@ -272,7 +275,7 @@ def main():
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(data, f, separators=(",", ":"))
-    print(f"\nSaved -> {out_path}  ({os.path.getsize(out_path)/1024:.1f} KB)")
+    print(f"\nSaved -> {out_path}  ({os.path.getsize(out_path) / 1024:.1f} KB)")
     return 0
 
 

@@ -290,16 +290,10 @@ def task_c_metrics(
     # with 6 classes and 24 patients - audit P1 issue.
     if y_prob is not None and len(classes) >= 2:
         arr = np.asarray(y_prob, dtype=float)
-        evaluable_classes = [
-            c for c in classes if int((y_true_arr == c).sum()) >= 2
-        ]
+        evaluable_classes = [c for c in classes if int((y_true_arr == c).sum()) >= 2]
         excluded_classes = [c for c in classes if c not in evaluable_classes]
         metrics["roc_auc_excluded_classes"] = excluded_classes
-        if (
-            arr.ndim == 2
-            and arr.shape[1] == len(classes)
-            and len(evaluable_classes) >= 2
-        ):
+        if arr.ndim == 2 and arr.shape[1] == len(classes) and len(evaluable_classes) >= 2:
             try:
                 class_to_idx = {c: i for i, c in enumerate(classes)}
                 cols = [class_to_idx[c] for c in evaluable_classes]

@@ -60,8 +60,14 @@ from .common import C797S_RE, ParsedTables, classify_egfr_variant, make_patient_
 SOURCE_PREFIX = "MSK_CHORD"
 LUNG_DETAILED = {"Lung Adenocarcinoma", "Non-Small Cell Lung Cancer"}
 EGFR_TKIS = {
-    "OSIMERTINIB", "ERLOTINIB", "GEFITINIB", "AFATINIB",
-    "DACOMITINIB", "ICOTINIB", "LAZERTINIB", "ROCILETINIB",
+    "OSIMERTINIB",
+    "ERLOTINIB",
+    "GEFITINIB",
+    "AFATINIB",
+    "DACOMITINIB",
+    "ICOTINIB",
+    "LAZERTINIB",
+    "ROCILETINIB",
 }
 # All days-from-anchor offsets become real dates by shifting against this
 # epoch. The 2020-01-01 choice is documented (not the patient's real osi
@@ -269,7 +275,9 @@ def parse(study_dir: Path) -> ParsedTables:
             else None
         )
         vital = pat_lookup.loc[pid].get("OS_STATUS") if pid in pat_lookup.index else None
-        stage = pat_lookup.loc[pid].get("STAGE_HIGHEST_RECORDED") if pid in pat_lookup.index else None
+        stage = (
+            pat_lookup.loc[pid].get("STAGE_HIGHEST_RECORDED") if pid in pat_lookup.index else None
+        )
         age = pat_lookup.loc[pid].get("CURRENT_AGE_DEID") if pid in pat_lookup.index else None
         try:
             age_int = int(float(age)) if pd.notna(age) else -1
@@ -323,9 +331,13 @@ def parse(study_dir: Path) -> ParsedTables:
             }
         )
         pt_progs = prog_lung[prog_lung["PATIENT_ID"] == pid]
-        first_post_osi_prog_offset = pt_progs.loc[
-            pt_progs["START_INT"].astype("Int64") >= osi_start_offset, "START_INT"
-        ].min() if not pt_progs.empty else None
+        first_post_osi_prog_offset = (
+            pt_progs.loc[
+                pt_progs["START_INT"].astype("Int64") >= osi_start_offset, "START_INT"
+            ].min()
+            if not pt_progs.empty
+            else None
+        )
         if pd.notna(first_post_osi_prog_offset):
             event_date = _offset_to_date(osi_start_offset, int(first_post_osi_prog_offset))
             outcome_records.append(
@@ -357,9 +369,7 @@ def parse(study_dir: Path) -> ParsedTables:
                 protein = f"p.{protein}"
             gene = (vr.get("Hugo_Symbol") or "").upper()
             is_c797s = (
-                gene == "EGFR"
-                and isinstance(protein, str)
-                and bool(C797S_RE.search(protein))
+                gene == "EGFR" and isinstance(protein, str) and bool(C797S_RE.search(protein))
             )
             variant_records.append(
                 {

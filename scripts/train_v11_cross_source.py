@@ -127,9 +127,7 @@ def _evaluate(
     out: dict = {
         "n_eval_full": len(X_eval),
         "n_eval_events": int(surv_eval.loc[X_eval.index, "E"].sum()) if len(X_eval) else 0,
-        "n_eval_censored": int(
-            (surv_eval.loc[X_eval.index, "E"] == 0).sum()
-        ) if len(X_eval) else 0,
+        "n_eval_censored": int((surv_eval.loc[X_eval.index, "E"] == 0).sum()) if len(X_eval) else 0,
     }
 
     # --- MAE on event-observed subset ---
@@ -163,9 +161,7 @@ def _evaluate(
         pred_for_c = (
             -hazards if model_name == "cox" else hazards  # already -days for regressors
         )
-        out["c_index"] = float(
-            harrell_c_index(times=times, preds=pred_for_c, events=events)
-        )
+        out["c_index"] = float(harrell_c_index(times=times, preds=pred_for_c, events=events))
         ci_c = bootstrap_ci(
             lambda T, P, E: harrell_c_index(T, P, E) if len(set(T)) > 1 else float("nan"),
             times,
@@ -177,8 +173,7 @@ def _evaluate(
         out["c_index"] = None
         out["c_index_ci"] = None
         notes.append(
-            "C-index undefined: target has no inter-patient variation "
-            "(no comparable pairs)."
+            "C-index undefined: target has no inter-patient variation (no comparable pairs)."
         )
 
     out["notes"] = notes
@@ -340,15 +335,15 @@ def _print_summary(summary: list[dict]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--parquet", type=Path, default=REPO_ROOT / "data" / "processed" / "oncotraj_v1")
+    parser.add_argument(
+        "--parquet", type=Path, default=REPO_ROOT / "data" / "processed" / "oncotraj_v1"
+    )
     parser.add_argument(
         "--splits",
         type=Path,
         default=REPO_ROOT / "data" / "processed" / "oncotraj_v1" / "_splits.json",
     )
-    parser.add_argument(
-        "--reports-dir", type=Path, default=REPO_ROOT / "eval_reports_v1"
-    )
+    parser.add_argument("--reports-dir", type=Path, default=REPO_ROOT / "eval_reports_v1")
     args = parser.parse_args()
     result = run(args.parquet, args.splits, args.reports_dir)
     _print_summary(result["summary"])

@@ -147,10 +147,7 @@ class CoxModel(OncoTrajModel):
         df[self._duration_col] = self._surv_target.loc[common, "T"].astype(float).values
         df[self._event_col] = self._surv_target.loc[common, "E"].astype(int).values
         # Drop near-zero-variance columns lifelines would reject anyway.
-        keep = [
-            c for c in X.columns
-            if df[c].nunique(dropna=False) > 1
-        ]
+        keep = [c for c in X.columns if df[c].nunique(dropna=False) > 1]
         df = df[[*keep, self._duration_col, self._event_col]]
         self.feature_names_ = keep
         self._fitter.fit(

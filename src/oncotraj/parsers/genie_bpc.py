@@ -59,8 +59,14 @@ from .common import C797S_RE, ParsedTables, classify_egfr_variant, make_patient_
 SOURCE_PREFIX = "GENIE_BPC"
 OSI_EPOCH = date(2020, 1, 1)
 EGFR_TKIS = [
-    "Osimertinib", "Erlotinib", "Gefitinib", "Afatinib",
-    "Dacomitinib", "Icotinib", "Lazertinib", "Rociletinib",
+    "Osimertinib",
+    "Erlotinib",
+    "Gefitinib",
+    "Afatinib",
+    "Dacomitinib",
+    "Icotinib",
+    "Lazertinib",
+    "Rociletinib",
 ]
 
 
@@ -101,12 +107,20 @@ def _map_stage(v: object) -> StageAtDiagnosis:
         return StageAtDiagnosis.unknown
     s = v.strip().lower().replace("stage ", "")
     mapping = {
-        "iv": StageAtDiagnosis.IV_NOS, "4": StageAtDiagnosis.IV_NOS,
-        "iva": StageAtDiagnosis.IVA, "ivb": StageAtDiagnosis.IVB,
-        "iiia": StageAtDiagnosis.IIIA, "iiib": StageAtDiagnosis.IIIB, "iiic": StageAtDiagnosis.IIIC,
-        "iii": StageAtDiagnosis.IIIA, "3a": StageAtDiagnosis.IIIA, "3b": StageAtDiagnosis.IIIB,
-        "ii": StageAtDiagnosis.II, "2": StageAtDiagnosis.II,
-        "i": StageAtDiagnosis.I, "1": StageAtDiagnosis.I,
+        "iv": StageAtDiagnosis.IV_NOS,
+        "4": StageAtDiagnosis.IV_NOS,
+        "iva": StageAtDiagnosis.IVA,
+        "ivb": StageAtDiagnosis.IVB,
+        "iiia": StageAtDiagnosis.IIIA,
+        "iiib": StageAtDiagnosis.IIIB,
+        "iiic": StageAtDiagnosis.IIIC,
+        "iii": StageAtDiagnosis.IIIA,
+        "3a": StageAtDiagnosis.IIIA,
+        "3b": StageAtDiagnosis.IIIB,
+        "ii": StageAtDiagnosis.II,
+        "2": StageAtDiagnosis.II,
+        "i": StageAtDiagnosis.I,
+        "1": StageAtDiagnosis.I,
     }
     return mapping.get(s, StageAtDiagnosis.unknown)
 
@@ -129,7 +143,10 @@ def parse(study_dir: Path) -> ParsedTables:
     patients_raw = _read_clinical(base / "data_clinical_patient.txt")
     samples_raw = _read_clinical(base / "data_clinical_sample.txt")
     muts_raw = pd.read_csv(
-        base / "data_mutations_extended.txt", sep="\t", dtype=str, low_memory=False,
+        base / "data_mutations_extended.txt",
+        sep="\t",
+        dtype=str,
+        low_memory=False,
         usecols=["Hugo_Symbol", "Tumor_Sample_Barcode", "HGVSp_Short", "Variant_Classification"],
     )
     reg = pd.read_csv(base / "regimen_cancer_level_dataset.csv", dtype=str, low_memory=False)
@@ -145,7 +162,9 @@ def parse(study_dir: Path) -> ParsedTables:
 
     # First osimertinib regimen row per patient (for PFS/OS endpoints + start offset).
     osi_regs = reg[reg["regimen_drugs"].str.contains("Osimertinib", case=False, na=False)].copy()
-    osi_first_reg = osi_regs.sort_values("regnum").groupby("record_id").head(1).set_index("record_id")
+    osi_first_reg = (
+        osi_regs.sort_values("regnum").groupby("record_id").head(1).set_index("record_id")
+    )
 
     # EGFR variants per patient.
     s2p = dict(zip(samples_raw["SAMPLE_ID"], samples_raw["PATIENT_ID"], strict=False))
@@ -159,7 +178,9 @@ def parse(study_dir: Path) -> ParsedTables:
     )
 
     pat_clin = patients_raw.set_index("PATIENT_ID")
-    sample_panel = dict(zip(samples_raw["SAMPLE_ID"], samples_raw.get("SEQ_ASSAY_ID", pd.Series()), strict=False))
+    sample_panel = dict(
+        zip(samples_raw["SAMPLE_ID"], samples_raw.get("SEQ_ASSAY_ID", pd.Series()), strict=False)
+    )
 
     # Candidate patients: anyone with an osimertinib regimen at all.
     candidate_pids = set(osi_first_reg.index)
@@ -208,7 +229,11 @@ def parse(study_dir: Path) -> ParsedTables:
         except (TypeError, ValueError):
             age_int = -1
         death_int = pat_lvl.loc[pid].get("hybrid_death_int") if pid in pat_lvl.index else None
-        vital = VitalStatus.deceased if (death_int and str(death_int) not in ("", "nan")) else VitalStatus.alive
+        vital = (
+            VitalStatus.deceased
+            if (death_int and str(death_int) not in ("", "nan"))
+            else VitalStatus.alive
+        )
         stage = pat_clin.loc[pid].get("STAGE_HIGHEST_RECORDED") if pid in pat_clin.index else None
 
         patient_records.append(
@@ -262,7 +287,9 @@ def parse(study_dir: Path) -> ParsedTables:
                     "event_type": OutcomeEventType.progression_recist.value,
                     "event_date": OSI_EPOCH + timedelta(days=pfs_days),
                     "recist_response": RecistResponse.progressive_disease.value,
-                    "resistance_mechanism_class": _infer_mechanism(muts_raw.loc[muts_raw["PATIENT_ID"] == pid]),
+                    "resistance_mechanism_class": _infer_mechanism(
+                        muts_raw.loc[muts_raw["PATIENT_ID"] == pid]
+                    ),
                 }
             )
 
@@ -273,7 +300,9 @@ def parse(study_dir: Path) -> ParsedTables:
             elif not protein.startswith("p."):
                 protein = f"p.{protein}"
             gene = (vr.get("Hugo_Symbol") or "").upper()
-            is_c797s = gene == "EGFR" and isinstance(protein, str) and bool(C797S_RE.search(protein))
+            is_c797s = (
+                gene == "EGFR" and isinstance(protein, str) and bool(C797S_RE.search(protein))
+            )
             panel = sample_panel.get(vr["Tumor_Sample_Barcode"], "")
             assay = Assay.MSK_IMPACT_468 if "IMPACT" in str(panel).upper() else Assay.unknown
             variant_records.append(

@@ -372,7 +372,12 @@ class LSTMModel(OncoTrajModel):
         # Weights are inverse-frequency from the training labels, with a
         # uniform fallback when y_cls is missing or single-class.
         ce_weight = None
-        if y_cls is not None and not y_cls.empty and cls_classes is not None and len(cls_classes) > 1:
+        if (
+            y_cls is not None
+            and not y_cls.empty
+            and cls_classes is not None
+            and len(cls_classes) > 1
+        ):
             counts = y_cls.value_counts().reindex(cls_classes).fillna(1.0).to_numpy()
             inv = counts.sum() / (len(counts) * counts)
             ce_weight = torch.tensor(inv, dtype=torch.float32, device=self.device)

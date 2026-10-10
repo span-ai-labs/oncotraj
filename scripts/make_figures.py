@@ -472,9 +472,7 @@ def figure_5_cross_source(
                 ax.text(x, h + 12, f"{round(h)}", ha="center", fontsize=7, color="#333333")
 
     ax.set_xticks(xs)
-    ax.set_xticklabels(
-        [MODEL_DISPLAY.get(m, m) for m in models_in_order], fontsize=9
-    )
+    ax.set_xticklabels([MODEL_DISPLAY.get(m, m) for m in models_in_order], fontsize=9)
     ax.set_ylabel("Task B test MAE (days; lower is better)")
     ax.set_title(
         "Task B (time-to-progression) · in-distribution vs cross-source · "
