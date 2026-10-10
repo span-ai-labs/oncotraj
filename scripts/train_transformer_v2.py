@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import sys
 import time
 from dataclasses import asdict, dataclass
@@ -282,6 +283,9 @@ def train_one_config(
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "checkpoints").mkdir(exist_ok=True)
 
+    # MLflow 3 refuses the filesystem backend unless asked; `mlruns/` is the
+    # documented tracking location here, so opt in.
+    os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
     mlflow.set_tracking_uri(f"file://{(REPO_ROOT / 'mlruns').as_posix()}")
     mlflow.set_experiment("oncotraj-baselines")
     run_name = f"transformer_v2_{config.name}_{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"

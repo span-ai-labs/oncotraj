@@ -40,6 +40,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 import build_dataset  # noqa: E402
 
+PAPERS_ROOT = REPO_ROOT / "data" / "raw" / "papers"
+
+# The synthetic cohort alone has no post-baseline samples; the leak these tests
+# measure only exists once the FLAURA + OSCILLATE supplements are in the build.
+requires_papers = pytest.mark.skipif(
+    not PAPERS_ROOT.exists(),
+    reason="paper supplements not present at data/raw/papers/",
+)
+
 # ---------------------------------------------------------------------------
 # Fixture: parquet built from synthetic + papers (the same data the baselines
 # train against). One tmp_path fixture so the test runs in isolation.
@@ -55,9 +64,7 @@ def tables(tmp_path_factory) -> BuiltTables:
         cohort="egfr_nsclc",
         use_synthetic=True,
         raw_root=tmp / "raw",
-        papers_root=REPO_ROOT / "data" / "raw" / "papers"
-        if (REPO_ROOT / "data" / "raw" / "papers").exists()
-        else None,
+        papers_root=PAPERS_ROOT if PAPERS_ROOT.exists() else None,
     )
     return BuiltTables(
         patients=pd.read_parquet(output / "patients.parquet"),
@@ -132,6 +139,7 @@ def test_no_leakage_invariant_strict(tables: BuiltTables):
     )
 
 
+@requires_papers
 def test_pre_fix_features_did_leak(tables: BuiltTables):
     """Sanity check that the cutoff is actually doing something.
 
@@ -259,6 +267,7 @@ def test_one_hot_columns_unaffected_by_cutoff(tables: BuiltTables):
     )
 
 
+@requires_papers
 def test_quantify_leakage_for_audit_log(tables: BuiltTables, capsys):
     """Not strictly a test — emits the count of leaking rows for the audit log.
 

@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -164,6 +165,9 @@ def train_one(
     model.save(model_path)
 
     # MLflow logging.
+    # MLflow 3 refuses the filesystem backend unless asked; `mlruns/` is the
+    # documented tracking location here, so opt in.
+    os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
     mlflow.set_tracking_uri(f"file://{(REPO_ROOT / 'mlruns').as_posix()}")
     mlflow.set_experiment(mlflow_experiment)
     run_name = f"task{task}_{model_name}_{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"

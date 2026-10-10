@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 import time
@@ -275,6 +276,8 @@ def train(args: argparse.Namespace) -> dict:
     train_ds = EventDataset(train_pids, sequences, y_reg, y_cls, label_encoder)
     val_ds = EventDataset(val_pids, sequences, y_reg, y_cls, label_encoder)
 
+    # transformers 5 dropped `warmup_ratio`; give the same 10% warmup as a step count.
+    total_steps = math.ceil(len(train_ds) / args.batch_size) * args.epochs
     targs = TrainingArguments(
         output_dir=str(output_dir / "hf_trainer"),
         num_train_epochs=args.epochs,
@@ -282,7 +285,7 @@ def train(args: argparse.Namespace) -> dict:
         per_device_eval_batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         weight_decay=1e-2,
-        warmup_ratio=0.1,
+        warmup_steps=math.ceil(0.1 * total_steps),
         logging_steps=10,
         eval_strategy="epoch",
         save_strategy="epoch",
@@ -307,6 +310,9 @@ def train(args: argparse.Namespace) -> dict:
         data_collator=collate,
     )
 
+    # MLflow 3 refuses the filesystem backend unless asked; `mlruns/` is the
+    # documented tracking location here, so opt in.
+    os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
     mlflow.set_tracking_uri(f"file://{(REPO_ROOT / 'mlruns').as_posix()}")
     mlflow.set_experiment("oncotraj-baselines")
     run_name = f"transformer_{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}"

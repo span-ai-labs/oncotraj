@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
+import os
 import sys
 import time
 from datetime import UTC, datetime
@@ -111,6 +112,9 @@ def grid_search(
     test_pids = _split_index(manifest, "test")
 
     device = best_device()
+    # MLflow 3 refuses the filesystem backend unless asked; `mlruns/` is the
+    # documented tracking location here, so opt in.
+    os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
     mlflow.set_tracking_uri(f"file://{(REPO_ROOT / 'mlruns').as_posix()}")
     mlflow.set_experiment(mlflow_experiment)
 

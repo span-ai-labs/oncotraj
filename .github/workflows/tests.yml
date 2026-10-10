@@ -14,6 +14,8 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # uv.lock is gitignored, so key the cache on the manifest instead.
+          cache-dependency-glob: pyproject.toml
 
       - name: Set up Python
         run: uv python install 3.11
